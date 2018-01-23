@@ -9,6 +9,6 @@ sealed trait Event {
   val id: Long = System.currentTimeMillis()
 }
 
-case class UserLoggedIn(data: GroupState) extends AnyVal with Event
+case class UserLoggedIn(data: GroupState) extends Event
 
 case class Update(login: Login, checked: List[LocalDate], unchecked: List[LocalDate])
