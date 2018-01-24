@@ -27,6 +27,7 @@ lazy val frontend =
     .settings(
       scalaJSUseMainModuleInitializer := true,
       libraryDependencies ++= Seq(
+        "com.lihaoyi" %%% "scalatags" % "0.6.7",
         "org.scala-js" %%% "scalajs-dom" % "0.9.2",
         "com.lihaoyi" %%% "upickle" % "0.5.1"
       )

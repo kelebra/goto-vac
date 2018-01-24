@@ -16,7 +16,7 @@ object Backend extends App {
 
   import system.dispatcher
 
-  implicit val materializer: ActorMaterializer = ActorMaterializer()
+  implicit val mat: ActorMaterializer = ActorMaterializer()
 
   val binding = Http().bindAndHandle(Rest.route, host, port)
 
