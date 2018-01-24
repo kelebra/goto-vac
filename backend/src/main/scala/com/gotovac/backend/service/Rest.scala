@@ -1,10 +1,10 @@
 package com.gotovac.backend.service
 
-import akka.http.scaladsl.model.ws.{Message, TextMessage}
+import akka.http.scaladsl.model.ws.Message
 import akka.http.scaladsl.server.{Directives, Route}
-import akka.stream.scaladsl.{Flow, Source}
+import akka.stream.scaladsl.Flow
 
-object Rest extends Directives {
+case class Rest(socketFlow: Flow[Message, Message, Any]) extends Directives {
 
   def route: Route =
     get {
@@ -15,12 +15,7 @@ object Rest extends Directives {
           getFromResource("frontend-fastopt.js")
         }
     } ~ path("socket") {
-      handleWebSocketMessages(flow)
+      handleWebSocketMessages(socketFlow)
     }
 
-  private val flow: Flow[Message, Message, Any] =
-    Flow[Message].mapConcat {
-      case text: TextMessage =>
-        TextMessage(Source.single("Hello ") ++ text.textStream ++ Source.single("!")) :: Nil // TODO: change
-    }
 }

@@ -18,7 +18,7 @@ object SocketRouter {
     }
 
     socket.onopen = {
-      (e: Event) => console.log(e)
+      (e: Event) => console.log("Socket connection was opened")
     }
   }
 

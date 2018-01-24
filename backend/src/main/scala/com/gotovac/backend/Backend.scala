@@ -3,7 +3,7 @@ package com.gotovac.backend
 import akka.actor.ActorSystem
 import akka.http.scaladsl.Http
 import akka.stream.ActorMaterializer
-import com.gotovac.backend.service.Rest
+import com.gotovac.backend.service.{Rest, Socket}
 
 import scala.util.{Failure, Success, Try}
 
@@ -18,7 +18,10 @@ object Backend extends App {
 
   implicit val mat: ActorMaterializer = ActorMaterializer()
 
-  val binding = Http().bindAndHandle(Rest.route, host, port)
+  val socket = Socket()
+  val rest = Rest(socket.flow)
+
+  val binding = Http().bindAndHandle(rest.route, host, port)
 
   binding.onComplete {
     case Success(b) =>
