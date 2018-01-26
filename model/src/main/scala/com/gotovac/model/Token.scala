@@ -2,7 +2,9 @@ package com.gotovac.model
 
 import java.util.UUID
 
-case class Token(value: String = UUID.randomUUID().toString)
+import com.gotovac.model.Types.Login
+
+case class Token(login: Login, value: String = UUID.randomUUID().toString)
 
 object Token {
 

@@ -7,17 +7,25 @@ import scala.util.Try
 
 package object chain {
 
-  type Processor = String => String
+  private type Chain = PartialFunction[String, String]
 
-  def typedMapper[T](json: String)
-                    (errorMessage: String)
-                    (stage: T => String)
-                    (implicit urd: Reader[T]): String =
-    Try(read[T](json)).map(stage).getOrElse(errorMessage)
+  abstract class Producer[T](implicit val urd: Reader[T]) extends Chain {
 
-  val credentialsProcess: Processor =
-    json => typedMapper[Credentials](json)("Wrong credentials")(_ => write(Token()))
+    override def isDefinedAt(x: String): Boolean = Try(read[T](x)).isSuccess
+  }
 
-  val onlineProcess: Processor =
-    json => typedMapper[UserOnline](json)("")(_ => json)
+  private val credentialsProcess: Chain = new Producer[Credentials]() {
+
+    override def apply(v1: String): String = {
+      val login = read[Credentials](v1).login
+      write(Token(login))
+    }
+  }
+
+  private val userOnlineProcess: Chain = new Producer[UserOnline]() {
+
+    override def apply(v1: String): String = v1
+  }
+
+  val jsonProcessing: Chain = credentialsProcess.orElse(userOnlineProcess)
 }

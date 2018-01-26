@@ -9,7 +9,7 @@ object Notification {
   def display(text: String): Unit = {
     val notificationElement = element(text)
     document.body.insertBefore(notificationElement, document.body.firstChild)
-    window.setTimeout(() => document.body.removeChild(notificationElement), 1000)
+    window.setTimeout(() => document.body.removeChild(notificationElement), 2000)
   }
 
   private def element(content: String): Node =
