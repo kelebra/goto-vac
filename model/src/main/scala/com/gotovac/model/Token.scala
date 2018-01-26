@@ -1,3 +1,12 @@
 package com.gotovac.model
 
-case class Token(value: String) extends AnyVal
+import java.util.UUID
+
+case class Token(value: String = UUID.randomUUID().toString)
+
+object Token {
+
+  import upickle.default.{macroRW, ReadWriter => RW}
+
+  implicit val tokenJson: RW[Token] = macroRW
+}

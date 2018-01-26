@@ -19,7 +19,7 @@ object Backend extends App {
   implicit val mat: ActorMaterializer = ActorMaterializer()
 
   val socket = Socket()
-  val rest = Rest(socket.flow)
+  val rest = Rest(socket.replyFlow, socket.broadcastFlow)
 
   val binding = Http().bindAndHandle(rest.route, host, port)
 

@@ -1,14 +1,14 @@
 package com.gotovac.model
 
-import java.time.LocalDate
-
 import com.gotovac.model.Types.Login
 
-sealed trait Event {
+sealed trait Event
 
-  val id: Long = System.currentTimeMillis()
+case class UserOnline(login: Login, online: Boolean) extends Event
+
+object UserOnline {
+
+  import upickle.default.{macroRW, ReadWriter => RW}
+
+  implicit val userOnlineJson: RW[UserOnline] = macroRW
 }
-
-case class UserLoggedIn(data: GroupState) extends Event
-
-case class Update(login: Login, checked: List[LocalDate], unchecked: List[LocalDate])

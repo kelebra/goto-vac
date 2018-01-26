@@ -28,13 +28,12 @@ lazy val frontend =
       scalaJSUseMainModuleInitializer := true,
       libraryDependencies ++= Seq(
         "com.lihaoyi" %%% "scalatags" % "0.6.7",
-        "org.scala-js" %%% "scalajs-dom" % "0.9.2",
-        "com.lihaoyi" %%% "upickle" % "0.5.1"
+        "org.scala-js" %%% "scalajs-dom" % "0.9.2"
       )
     )
     .dependsOn(modelJs)
 
 lazy val model = crossProject.crossType(CrossType.Pure) in file("model")
 
-lazy val modelJs = model.js
-lazy val modelJvm = model.jvm
+lazy val modelJs = model.js.settings(libraryDependencies ++= Seq("com.lihaoyi" %%% "upickle" % "0.5.1"))
+lazy val modelJvm = model.jvm.settings(libraryDependencies ++= Seq("com.lihaoyi" %% "upickle" % "0.5.1"))

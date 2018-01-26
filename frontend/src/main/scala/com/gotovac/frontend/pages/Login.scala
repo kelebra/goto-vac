@@ -1,6 +1,6 @@
 package com.gotovac.frontend.pages
 
-import com.gotovac.frontend.socket.SocketRouter
+import com.gotovac.frontend.socket.ReplySocket
 import com.gotovac.model.Credentials
 import org.scalajs.dom.Element
 import org.scalajs.dom.document.getElementById
@@ -12,7 +12,7 @@ import scalatags.JsDom.all._
 object Login extends Page {
 
   private val submitCredentials: MouseEvent => Unit =
-    _ => SocketRouter.connect(
+    _ => ReplySocket.login(
       Credentials(
         getElementById("login").asInstanceOf[Input].value,
         getElementById("password").asInstanceOf[Input].value

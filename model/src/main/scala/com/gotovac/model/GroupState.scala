@@ -1,7 +1,12 @@
 package com.gotovac.model
 
-import java.time.LocalDate
+import com.gotovac.model.Types.{Date, Login}
 
-import com.gotovac.model.Types.Login
+case class GroupState(data: Map[Login, List[Date]])
 
-case class GroupState(data: Map[Login, List[LocalDate]]) extends AnyVal
+object GroupState {
+
+  import upickle.default.{macroRW, ReadWriter => RW}
+
+  implicit val groupStateJson: RW[GroupState] = macroRW
+}

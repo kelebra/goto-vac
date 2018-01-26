@@ -1,14 +1,15 @@
 package com.gotovac.frontend
 
 import com.gotovac.frontend.pages.Login
-import com.gotovac.frontend.socket.SocketRouter
+import com.gotovac.frontend.socket.{BroadcastSocket, ReplySocket}
 
 import scala.scalajs.js
 
 object Frontend extends js.JSApp {
 
   override def main(): Unit = {
-    SocketRouter.init()
+    ReplySocket.connect()
+    BroadcastSocket.connect()
     Login.render()
   }
 }
