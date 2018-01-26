@@ -4,13 +4,13 @@ import akka.actor.ActorSystem
 import akka.http.scaladsl.model.ws.{Message, TextMessage}
 import akka.stream.ActorMaterializer
 import akka.stream.scaladsl.{BroadcastHub, Flow, Keep, MergeHub}
-import chain.jsonProcessing
+import com.gotovac.backend.service.chain.{CredentialsProcess, UserOnlineProcess}
 
 case class Socket(implicit val system: ActorSystem, mat: ActorMaterializer) {
 
   private val transformation =
     Flow[Message].map {
-      case TextMessage.Strict(json) => TextMessage(jsonProcessing(json))
+      case TextMessage.Strict(json) => TextMessage(UserOnlineProcess.orElse(CredentialsProcess)(json))
     }
 
   val replyFlow: Flow[Message, Message, Any] = transformation
