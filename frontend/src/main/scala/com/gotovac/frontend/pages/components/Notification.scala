@@ -8,7 +8,7 @@ object Notification {
 
   def display(text: String): Unit = {
     val notificationElement = element(text)
-    document.body.insertBefore(notificationElement, document.body.firstChild)
+    document.body.appendChild(notificationElement)
     window.setTimeout(() => document.body.removeChild(notificationElement), 2000)
   }
 

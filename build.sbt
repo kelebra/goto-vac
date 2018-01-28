@@ -4,11 +4,14 @@ version := "0.1"
 
 scalaVersion := "2.12.4"
 
+javaOptions += "-Xmx1G"
+
 lazy val `goto-vac` = (project in file(".")).aggregate(backend, frontend, modelJvm, modelJs)
 
 lazy val backend =
   (project in file("backend"))
     .dependsOn(modelJvm)
+    .dependsOn(frontend)
     .settings(
       libraryDependencies ++= Seq(
         "com.typesafe.akka" %% "akka-http" % "10.0.11"
