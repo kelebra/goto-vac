@@ -1,12 +1,15 @@
 package com.gotovac.backend.service.chain
 
 import com.gotovac.model.{Credentials, Token}
-import upickle.default.{read, write}
+import prickle.Pickle.{intoString => write}
+import prickle.Unpickle
 
-object CredentialsProcess extends Producer {
+object CredentialsProcess extends PartialFunction[String, String] {
 
   override def apply(json: String): String = {
-    val login = read[Credentials](json).login
+    val login = Unpickle[Credentials].fromString(json).get.login
     write(Token(login))
   }
+
+  override def isDefinedAt(x: String): Boolean = Unpickle[Credentials].fromString(x).isSuccess
 }

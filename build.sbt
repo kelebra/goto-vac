@@ -4,14 +4,13 @@ version := "0.1"
 
 scalaVersion := "2.12.4"
 
-javaOptions += "-Xmx1G"
+javaOptions += "-Xmx2G"
 
 lazy val `goto-vac` = (project in file(".")).aggregate(backend, frontend, modelJvm, modelJs)
 
 lazy val backend =
   (project in file("backend"))
-    .dependsOn(modelJvm)
-    .dependsOn(frontend)
+    .dependsOn(modelJvm, frontend)
     .settings(
       libraryDependencies ++= Seq(
         "com.typesafe.akka" %% "akka-http" % "10.0.11"
@@ -36,7 +35,10 @@ lazy val frontend =
     )
     .dependsOn(modelJs)
 
-lazy val model = crossProject.crossType(CrossType.Pure) in file("model")
+lazy val model = (crossProject.crossType(CrossType.Pure) in file("model"))
+  .settings(
+    libraryDependencies ++= Seq("com.github.benhutchison" %%% "prickle" % "1.1.13")
+  )
 
-lazy val modelJs = model.js.settings(libraryDependencies ++= Seq("com.lihaoyi" %%% "upickle" % "0.5.1"))
-lazy val modelJvm = model.jvm.settings(libraryDependencies ++= Seq("com.lihaoyi" %% "upickle" % "0.5.1"))
+lazy val modelJs = model.js
+lazy val modelJvm = model.jvm

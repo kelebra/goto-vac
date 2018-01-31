@@ -2,9 +2,8 @@ package com.gotovac.frontend.socket
 
 import com.gotovac.frontend.socket.storage.LoginStorage
 import com.gotovac.model.{Credentials, StateRequest, Token}
-import upickle.default.{read, write}
-
-import scala.util.Try
+import prickle.Pickle.{intoString => write}
+import prickle.Unpickle
 
 object ReplySocket extends Socket {
 
@@ -23,6 +22,6 @@ object ReplySocket extends Socket {
   }
 
   private def onTokenUpdate(json: String)(callback: Token => Unit): Unit = {
-    Try(read[Token](json)).map(callback)
+    Unpickle[Token].fromString(json).foreach(callback)
   }
 }
