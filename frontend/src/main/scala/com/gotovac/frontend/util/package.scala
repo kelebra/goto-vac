@@ -41,7 +41,7 @@ package object util {
       start.setDate(start.getDate() + 1)
       daysOfYear(start, finish, new Date(start.valueOf()) :: acc)
     }
-    else acc
+    else acc.reverse
   }
 
   @tailrec
