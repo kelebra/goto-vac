@@ -11,3 +11,9 @@ sbt
 project backend
 ~reStart
 ```
+
+## Publishing
+
+```scala
+sbt "project backend" clean assembly deployHeroku
+```
