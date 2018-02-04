@@ -2,7 +2,7 @@ package com.gotovac.backend.service
 
 import com.gotovac.backend.service.repository.{StateRepository, UserRepository}
 import com.gotovac.model._
-import slick.jdbc.SQLiteProfile.api._
+import slick.jdbc.PostgresProfile.api._
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.language.postfixOps
@@ -20,7 +20,9 @@ package object database {
       val credentialsAreValid = Db.run(userQuery.exists.result)
       if (credentialsAreValid) {
         val token = Token(attempt.login)
-        Db.run(userQuery.update((attempt.login, attempt.password, token.value)))
+        Db.run(userQuery.update(
+          (attempt.login, attempt.password, Option(token.value)))
+        )
         Option(token)
       } else None
     }
@@ -29,7 +31,7 @@ package object database {
       Db.run(
         Db.credentials
           .filter(_.login === token.login)
-          .filter(_.token === token.value)
+          .filter(_.token === Option(token.value))
           .exists
           .result
       )

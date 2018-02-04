@@ -1,38 +1,27 @@
 package com.gotovac.backend.service.database
 
 import com.gotovac.model.Types.{Date, Login}
+import slick.jdbc.PostgresProfile.api._
 import slick.jdbc.meta.MTable
 
 import scala.concurrent.Await
 import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.duration._
 import scala.language.postfixOps
 
 object Db {
 
-  import slick.jdbc.SQLiteProfile.api._
-
-  import scala.concurrent.duration._
-
   private implicit val duration: Duration = 3 seconds
 
-  class CredentialsTable(tag: Tag) extends Table[(Login, String, String)](tag, "CREDENTIALS") {
+  class CredentialsTable(tag: Tag) extends Table[(Login, String, Option[String])](tag, "CREDENTIALS") {
 
     def login = column[Login]("LOGIN", O.PrimaryKey)
 
     def password = column[String]("PASSWORD")
 
-    def token = column[String]("TOKEN")
+    def token = column[Option[String]]("TOKEN")
 
     def * = (login, password, token)
-  }
-
-  class TokensTable(tag: Tag) extends Table[(Login, String)](tag, "TOKENS") {
-
-    def login = column[Login]("LOGIN", O.PrimaryKey)
-
-    def token = column[String]("TOKEN")
-
-    def * = (login, token)
   }
 
   class StateTable(tag: Tag) extends Table[(Login, Date)](tag, "STATE") {
@@ -46,11 +35,9 @@ object Db {
 
   val credentials = TableQuery[CredentialsTable]
 
-  val tokens = TableQuery[TokensTable]
-
   val state = TableQuery[StateTable]
 
-  private val applicationTables = List(credentials, tokens, state)
+  private val applicationTables = List(credentials, state)
 
   val db = Database.forConfig("fileDb")
 
