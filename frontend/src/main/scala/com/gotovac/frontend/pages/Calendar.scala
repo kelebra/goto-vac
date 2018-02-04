@@ -1,17 +1,19 @@
 package com.gotovac.frontend.pages
 
+import com.gotovac.frontend.pages.components.CalendarSelection
 import com.gotovac.frontend.socket.BroadcastSocket
+import com.gotovac.frontend.socket.storage.LoginStorage
 import com.gotovac.frontend.util.{JsDateUtils, MonthOffset, daysOfYear, draw, offsetMonths}
-import com.gotovac.model.{GroupState, StateUpdate}
+import com.gotovac.model.Types.Login
+import com.gotovac.model.{GroupState, SelectedDate, StateUpdate}
 import org.scalajs.dom.raw.MouseEvent
-import org.scalajs.dom.document
 
 import scala.scalajs.js.Date
 import scalatags.JsDom.all._
 
 object Calendar {
 
-  def renderCalendarView(state: GroupState): Unit =
+  def renderCalendarView(state: GroupState): Unit = {
     draw(
       List(
         div(`class` := "row", style := "padding: 1%",
@@ -24,6 +26,21 @@ object Calendar {
         )
       ).map(_.render)
     )
+    state.data.foreach {
+      case (login, dates) =>
+        dates.foreach(date => update(login, date, selected = true))
+    }
+  }
+
+  def update(delta: StateUpdate): Unit = update(delta.token.login, delta.date, delta.selected)
+
+  private def update(login: Login,
+                     selectedDate: SelectedDate,
+                     selected: Boolean): Unit = {
+    val id = CalendarSelection.cellId(login, selectedDate.date)
+    if (selected) CalendarSelection.select(id)
+    else CalendarSelection.unSelect(id)
+  }
 
   private def calendarTable(state: GroupState) = {
     val dates = generateDates
@@ -35,35 +52,42 @@ object Calendar {
         .keys
         .map(login => login -> dates)
         .map {
-          case (login, dateLine) => tr(td(b(login)), dateLine.map(dateCell))
+          case (login, dateLine) =>
+            tr(
+              td(b(login)),
+              dateLine.map(date =>
+                dateCell(login, date, LoginStorage.token.login == login)
+              )
+            )
         }
         .toList
     )
   }
 
-  private def monthCell(month: MonthOffset) =
-    td(colspan := month._2, month._1)
+  private def monthCell(month: MonthOffset) = td(colspan := month._2, month._1)
 
-  private def dateCell(date: Date) = {
-    val dateId = date.id
+  private def dateCell(login: Login, date: Date, canModify: Boolean) = {
+    val identifier = CalendarSelection.cellId(login, date)
+    val pointer = if (canModify) "cursor: pointer;" else ""
+    val onclickFunction: MouseEvent => Unit =
+      if (canModify) dateClick(identifier) else _ => Unit
     td(
-      id := dateId,
-      style := "white-space: nowrap;",
+      id := identifier,
+      style := s"white-space: nowrap; $pointer",
       date.dayOfWeek,
-      onclick := dateClick(dateId)
+      onclick := onclickFunction
     )
   }
 
-  private def dateClick(dateId: String): MouseEvent => Unit =
-    _ => BroadcastSocket.modifyDate(dateId, isSelected(dateId))
-
-  def update(delta: StateUpdate): Unit = ???
+  private def dateClick(identifier: String): MouseEvent => Unit =
+    _ => BroadcastSocket.modifyDate(
+      SelectedDate(CalendarSelection.cellUTCDate(identifier)),
+      !CalendarSelection.isSelected(identifier)
+    )
 
   private def generateDates = {
     val start = new Date()
+    start.setHours(0, 0, 0, 0)
     daysOfYear(start, start.plusYears(1), List(start))
   }
-
-  private def isSelected(dateId: String): Boolean =
-    document.getElementById(dateId).classList.contains("success")
 }

@@ -24,11 +24,11 @@ object Backend extends App {
 
   val credentialsProcess = new CredentialsProcess(UserRepository)
   val stateRequestProcess = new StateRequestProcess(StateRepository)
-  val stateUpdateProcess = new StateUpdateProcess(StateRepository)
+  val stateUpdateProcess = new StateUpdateProcess(StateRepository, UserRepository)
 
   val processing =
-    stateRequestProcess
-      .orElse(stateUpdateProcess)
+    stateUpdateProcess
+      .orElse(stateRequestProcess)
       .orElse(UserOnlineProcess)
       .orElse(credentialsProcess)
 

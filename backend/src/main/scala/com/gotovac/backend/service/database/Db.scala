@@ -1,12 +1,11 @@
 package com.gotovac.backend.service.database
 
-import com.gotovac.model.Types.{Date, Login, UTC}
+import com.gotovac.model.Types.{Date, Login}
 import slick.jdbc.meta.MTable
 
 import scala.concurrent.Await
-import scala.language.postfixOps
-
 import scala.concurrent.ExecutionContext.Implicits.global
+import scala.language.postfixOps
 
 object Db {
 
@@ -36,15 +35,13 @@ object Db {
     def * = (login, token)
   }
 
-  class StateTable(tag: Tag) extends Table[(Login, Date, UTC)](tag, "STATE") {
+  class StateTable(tag: Tag) extends Table[(Login, Date)](tag, "STATE") {
 
-    def login = column[Login]("LOGIN", O.PrimaryKey)
+    def login = column[Login]("LOGIN")
 
     def date = column[Date]("DATE")
 
-    def utc = column[UTC]("UTC")
-
-    def * = (login, date, utc)
+    def * = (login, date)
   }
 
   val credentials = TableQuery[CredentialsTable]

@@ -1,5 +1,5 @@
 package com.gotovac.model
 
-import com.gotovac.model.Types.{Date, UTC}
+import com.gotovac.model.Types.Date
 
-case class SelectedDate(date: Date, zone: UTC)
+case class SelectedDate(date: Date)

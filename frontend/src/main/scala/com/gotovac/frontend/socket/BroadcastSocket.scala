@@ -4,7 +4,7 @@ import com.gotovac.frontend.pages.Calendar
 import com.gotovac.frontend.pages.components.Notification
 import com.gotovac.frontend.socket.storage.LoginStorage
 import com.gotovac.model.Types.Login
-import com.gotovac.model.{StateUpdate, UserOnline}
+import com.gotovac.model.{SelectedDate, StateUpdate, UserOnline}
 import prickle.Pickle.{intoString => write}
 import prickle.Unpickle
 
@@ -22,8 +22,8 @@ object BroadcastSocket extends Socket {
 
   def reportOnline(login: Login): Unit = send(write(UserOnline(login, online = true)))
 
-  def modifyDate(dateId: String, selected: Boolean): Unit =
-    send(write(StateUpdate(LoginStorage.token, null, selected)))
+  def modifyDate(selectedDate: SelectedDate, selected: Boolean): Unit =
+    send(write(StateUpdate(LoginStorage.token, selectedDate, selected)))
 
   private def onOnline(json: String)(callback: UserOnline => Unit): Unit =
     Unpickle[UserOnline].fromString(json)

@@ -23,4 +23,6 @@ object LoginStorage {
   private def keyAsLogin(key: String) = key.replace(applicationPrefix, "")
 
   private def isApplicationPrefix(key: String) = key.startsWith(applicationPrefix)
+
+  def clear(): Unit = window.sessionStorage.clear()
 }

@@ -44,8 +44,8 @@ package object database {
             .joinLeft(Db.state).on(_.login === _.login)
             .result
             .map(_.map {
-              case ((l1, _, _), Some((_, date, utc))) => l1 -> Seq(SelectedDate(date, utc))
-              case ((l1, _, _), None)                 => l1 -> Seq()
+              case ((l1, _, _), Some((_, date))) => l1 -> Seq(SelectedDate(date))
+              case ((l1, _, _), None)            => l1 -> Seq()
             })
         ).toMap
       )
@@ -54,14 +54,11 @@ package object database {
     override def updateState(stateUpdate: StateUpdate): Unit =
       Db.run(
         if (stateUpdate.selected)
-          Db.state.insertOrUpdate(
-            (stateUpdate.token.login, stateUpdate.date.date, stateUpdate.date.zone)
-          )
+          Db.state += (stateUpdate.token.login, stateUpdate.date.date)
         else
           Db.state
             .filter(_.login === stateUpdate.token.login)
             .filter(_.date === stateUpdate.date.date)
-            .filter(_.utc === stateUpdate.date.zone)
             .delete
       )
   }

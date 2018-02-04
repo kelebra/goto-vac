@@ -16,6 +16,7 @@ object ReplySocket extends Socket {
 
   override def onMessage(json: String): Unit = {
     onTokenUpdate(json)(token => {
+      LoginStorage.clear()
       LoginStorage.store(token)
       BroadcastSocket.reportOnline(token.login)
       requestInitialState(token)

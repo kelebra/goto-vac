@@ -4,7 +4,5 @@ object Types {
 
   type Login = String
 
-  type UTC = String
-
   type Date = Long
 }
