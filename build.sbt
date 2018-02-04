@@ -6,7 +6,18 @@ scalaVersion := "2.12.4"
 
 javaOptions += "-Xmx2G"
 
-lazy val `goto-vac` = (project in file(".")).aggregate(backend, frontend, modelJvm, modelJs)
+lazy val `goto-vac` = (project in file("."))
+  .aggregate(backend, frontend, modelJvm, modelJs)
+  .settings({
+    val stage = taskKey[Unit]("Stage task")
+
+    stage := {
+      IO.copyFile(
+        (assembly in backend in Compile).value,
+        baseDirectory.value / "target" / "webapp-runner.jar"
+      )
+    }
+  })
 
 lazy val backend =
   (project in file("backend"))
@@ -32,6 +43,7 @@ lazy val backend =
 lazy val frontend =
   (project in file("frontend"))
     .enablePlugins(ScalaJSPlugin)
+    .disablePlugins(AssemblyPlugin)
     .settings(
       scalaJSUseMainModuleInitializer := true,
       libraryDependencies ++= Seq(
@@ -46,5 +58,5 @@ lazy val model = (crossProject.crossType(CrossType.Pure) in file("model"))
     libraryDependencies ++= Seq("com.github.benhutchison" %%% "prickle" % "1.1.13")
   )
 
-lazy val modelJs = model.js
+lazy val modelJs = model.js.disablePlugins(AssemblyPlugin)
 lazy val modelJvm = model.jvm
