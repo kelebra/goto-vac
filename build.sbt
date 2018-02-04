@@ -13,7 +13,11 @@ lazy val backend =
     .dependsOn(modelJvm, frontend)
     .settings(
       libraryDependencies ++= Seq(
-        "com.typesafe.akka" %% "akka-http" % "10.0.11"
+        "com.typesafe.akka" %% "akka-http" % "10.0.11",
+        "com.typesafe.slick" %% "slick" % "3.2.1",
+        "org.slf4j" % "slf4j-nop" % "1.6.4",
+        "com.typesafe.slick" %% "slick-hikaricp" % "3.2.1",
+        "org.xerial" % "sqlite-jdbc" % "3.21.0.1"
       ),
       resourceGenerators in Compile += Def.task {
         val f1 = (fastOptJS in Compile in frontend).value

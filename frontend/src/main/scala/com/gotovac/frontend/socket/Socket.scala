@@ -1,8 +1,11 @@
 package com.gotovac.frontend.socket
 
+import com.gotovac.frontend.pages.components.Notification
+import com.gotovac.model.Forbidden
 import org.scalajs.dom.document.location
 import org.scalajs.dom.raw.{Event, WebSocket}
 import org.scalajs.dom.{MessageEvent, console}
+import prickle.Unpickle
 
 trait Socket {
 
@@ -14,9 +17,18 @@ trait Socket {
       (_: Event) => console.log(s"$name - connection was opened")
     }
     underlying.onmessage = {
-      (e: MessageEvent) => onMessage(e.data.toString)
+      (e: MessageEvent) => {
+        val json = e.data.toString
+        onForbidden(json) { forbidden => Notification.error(forbidden.message) }
+        onMessage(json)
+      }
     }
+    underlying.onclose =
+      (_: Event) => Notification.error("Connection lost with backend, refresh page")
   }
+
+  private def onForbidden(json: String)(callback: Forbidden => Unit): Unit =
+    Unpickle[Forbidden].fromString(json).foreach(callback)
 
   private def socketUrl(name: String): String = {
     val port = location.port

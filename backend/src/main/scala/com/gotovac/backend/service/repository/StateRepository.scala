@@ -1,14 +1,10 @@
 package com.gotovac.backend.service.repository
 
-import com.gotovac.model.GroupState
-import com.gotovac.model.Types.Login
+import com.gotovac.model.{GroupState, StateUpdate, Token}
 
-sealed trait StateRepository {
+trait StateRepository {
 
-  def getState(login: Login): GroupState
-}
+  def getState(token: Token): GroupState
 
-object StateRepository extends StateRepository {
-
-  override def getState(login: Login) = ???
+  def updateState(stateUpdate: StateUpdate): Unit
 }

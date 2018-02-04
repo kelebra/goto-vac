@@ -7,5 +7,6 @@ object UserOnlineProcess extends PartialFunction[String, String] {
 
   override def apply(json: String): String = json
 
-  override def isDefinedAt(x: String): Boolean = Unpickle[UserOnline].fromString(x).isSuccess
+  override def isDefinedAt(x: String): Boolean =
+    Unpickle[UserOnline].fromString(x).isSuccess
 }

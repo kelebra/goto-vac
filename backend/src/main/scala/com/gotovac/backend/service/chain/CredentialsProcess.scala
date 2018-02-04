@@ -1,15 +1,21 @@
 package com.gotovac.backend.service.chain
 
-import com.gotovac.model.{Credentials, Token}
+import com.gotovac.backend.service.repository.UserRepository
+import com.gotovac.model.{Credentials, Forbidden}
 import prickle.Pickle.{intoString => write}
 import prickle.Unpickle
 
-object CredentialsProcess extends PartialFunction[String, String] {
+class CredentialsProcess(userRepository: UserRepository)
+  extends PartialFunction[String, String] {
 
   override def apply(json: String): String = {
-    val login = Unpickle[Credentials].fromString(json).get.login
-    write(Token(login))
+    val credentials = Unpickle[Credentials].fromString(json).get
+    val token = userRepository.authorize(credentials)
+    token
+      .map(value => write(value))
+      .getOrElse(write(Forbidden("Invalid login/password")))
   }
 
-  override def isDefinedAt(x: String): Boolean = Unpickle[Credentials].fromString(x).isSuccess
+  override def isDefinedAt(x: String): Boolean =
+    Unpickle[Credentials].fromString(x).isSuccess
 }

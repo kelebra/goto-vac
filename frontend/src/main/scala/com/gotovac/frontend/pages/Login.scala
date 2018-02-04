@@ -1,5 +1,6 @@
 package com.gotovac.frontend.pages
 
+import com.gotovac.frontend.util.draw
 import com.gotovac.frontend.socket.ReplySocket
 import com.gotovac.model.Credentials
 import org.scalajs.dom.Element
@@ -9,7 +10,7 @@ import org.scalajs.dom.raw.MouseEvent
 
 import scalatags.JsDom.all._
 
-object Login extends Page {
+object Login {
 
   private val submitCredentials: MouseEvent => Unit =
     _ => ReplySocket.login(
@@ -19,7 +20,7 @@ object Login extends Page {
       )
     )
 
-  override val elements: List[Element] = List(
+  private val elements: List[Element] = List(
     div(`class` := "row",
       div(`class` := "col col-6 push-center",
         fieldset(
@@ -39,4 +40,6 @@ object Login extends Page {
       )
     ).render
   )
+
+  def render(): Unit = draw(elements)
 }

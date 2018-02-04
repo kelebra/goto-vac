@@ -6,5 +6,5 @@ object Types {
 
   type UTC = String
 
-  type Date = (Long, UTC)
+  type Date = Long
 }

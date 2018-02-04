@@ -1,7 +1,8 @@
 package com.gotovac.frontend.socket
 
+import com.gotovac.frontend.pages.Calendar
 import com.gotovac.frontend.socket.storage.LoginStorage
-import com.gotovac.model.{Credentials, StateRequest, Token}
+import com.gotovac.model.{Credentials, GroupState, StateRequest, Token}
 import prickle.Pickle.{intoString => write}
 import prickle.Unpickle
 
@@ -19,9 +20,14 @@ object ReplySocket extends Socket {
       BroadcastSocket.reportOnline(token.login)
       requestInitialState(token)
     })
+    onInitialState(json)(Calendar.renderCalendarView)
   }
 
   private def onTokenUpdate(json: String)(callback: Token => Unit): Unit = {
     Unpickle[Token].fromString(json).foreach(callback)
+  }
+
+  private def onInitialState(json: String)(callback: GroupState => Unit): Unit = {
+    Unpickle[GroupState].fromString(json).foreach(callback)
   }
 }
