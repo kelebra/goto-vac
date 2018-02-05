@@ -30,6 +30,8 @@ object Db {
 
     def date = column[Date]("DATE")
 
+    def idx = index("unique_date_selection", (login, date), unique = true)
+
     def * = (login, date)
   }
 
