@@ -4,6 +4,7 @@ import akka.actor.ActorSystem
 import akka.http.scaladsl.model.ws.{Message, TextMessage}
 import akka.stream.ActorMaterializer
 import akka.stream.scaladsl.{BroadcastHub, Flow, Keep, MergeHub}
+import com.gotovac.backend.service.chain.Constants
 
 case class Socket(processing: PartialFunction[String, String])
                  (implicit val system: ActorSystem, mat: ActorMaterializer) {
@@ -13,6 +14,7 @@ case class Socket(processing: PartialFunction[String, String])
       .map { case TextMessage.Strict(json) =>
         system.log.info(s"Received message: $json"); processing(json)
       }
+      .filterNot(_ == Constants.noOp)
       .map(json => TextMessage(json))
 
   val replyFlow: Flow[Message, Message, Any] = transformation

@@ -13,7 +13,7 @@ class StateUpdateProcess(stateRepository: StateRepository,
     if (userRepository.hasValidSession(stateUpdate.token)) {
       stateRepository.updateState(stateUpdate)
       write(stateUpdate.anonymous)
-    } else ""
+    } else Constants.noOp
   }
 
   override def isDefinedAt(x: String): Boolean =

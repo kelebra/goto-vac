@@ -48,8 +48,7 @@ object Calendar {
 
     table(`class` := "bordered",
       tr(style := "text-align: center", td(), months.map(monthCell)),
-      state.data
-        .keys
+      state.data.keys.toList.sorted
         .map(login => login -> dates)
         .map {
           case (login, dateLine) =>
