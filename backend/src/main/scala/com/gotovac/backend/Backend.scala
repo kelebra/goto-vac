@@ -12,7 +12,7 @@ import scala.util.{Failure, Success, Try}
 object Backend extends App {
 
   val host = Try(args(0).toString).getOrElse("0.0.0.0")
-  val port = Try(args(1).toInt).getOrElse(4567)
+  val port = Try(sys.env("PORT").toInt).getOrElse(4567)
 
   Db.init()
 
