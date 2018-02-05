@@ -46,8 +46,8 @@ package object database {
             .joinLeft(Db.state).on(_.login === _.login)
             .result
             .map(_.map {
-              case ((l1, _, _), Some((_, date))) => l1 -> Seq(SelectedDate(date))
-              case ((l1, _, _), None)            => l1 -> Seq()
+              case ((l1, _, _), Some((_, date))) => l1 -> Set(SelectedDate(date))
+              case ((l1, _, _), None)            => l1 -> Set.empty[SelectedDate]
             })
         ).toMap
       )
