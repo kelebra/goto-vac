@@ -4,7 +4,7 @@ import com.gotovac.model.Types.{Date, Login}
 import slick.jdbc.PostgresProfile.api._
 import slick.jdbc.meta.MTable
 
-import scala.concurrent.Await
+import scala.concurrent.{Await, Future}
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.duration._
 import scala.language.postfixOps
@@ -54,6 +54,6 @@ object Db {
     Await.result(createTablesIfDoNotExist, Duration.Inf)
   }
 
-  def run[T, E <: Effect](action: DBIOAction[T, NoStream, E]): T =
-    Await.result(db.run(action), duration)
+  def run[T, E <: Effect](action: DBIOAction[T, NoStream, E]): Future[T] =
+    db.run(action)
 }

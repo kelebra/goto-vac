@@ -1,12 +1,15 @@
 package com.gotovac.backend.service.chain
 
+import com.gotovac.backend.service.chain.Types.{Json, JsonReply}
 import com.gotovac.model.UserOnline
 import prickle.Unpickle
 
-object UserOnlineProcess extends PartialFunction[String, String] {
+import scala.concurrent.Future
 
-  override def apply(json: String): String = json
+object UserOnlineProcess extends PartialFunction[Json, JsonReply] {
 
-  override def isDefinedAt(x: String): Boolean =
-    Unpickle[UserOnline].fromString(x).isSuccess
+  override def apply(json: Json): JsonReply = Future.successful(json)
+
+  override def isDefinedAt(json: Json): Boolean =
+    Unpickle[UserOnline].fromString(json).isSuccess
 }

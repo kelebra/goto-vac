@@ -1,21 +1,30 @@
 package com.gotovac.backend.service.chain
 
+import com.gotovac.backend.service.chain.Types.{Json, JsonReply}
 import com.gotovac.backend.service.repository.{StateRepository, UserRepository}
 import com.gotovac.model.StateUpdate
 import prickle.Pickle.{intoString => write}
 import prickle.Unpickle
 
-class StateUpdateProcess(stateRepository: StateRepository,
-                         userRepository: UserRepository) extends PartialFunction[String, String] {
+import scala.concurrent.{ExecutionContext, Future}
 
-  override def apply(json: String): String = {
+class StateUpdateProcess(stateRepository: StateRepository, userRepository: UserRepository)
+                        (implicit ctx: ExecutionContext)
+  extends PartialFunction[Json, JsonReply] {
+
+  override def apply(json: Json): JsonReply = {
     val stateUpdate = Unpickle[StateUpdate].fromString(json).get
-    if (userRepository.hasValidSession(stateUpdate.token)) {
-      stateRepository.updateState(stateUpdate)
-      write(stateUpdate.anonymous)
-    } else Constants.noOp
+    userRepository
+      .hasValidSession(stateUpdate.token)
+      .flatMap {
+        case true =>
+          stateRepository
+            .updateState(stateUpdate)
+            .map(_ => write(stateUpdate.anonymous))
+        case _    => Future.successful(Types.noOp)
+      }
   }
 
-  override def isDefinedAt(x: String): Boolean =
+  override def isDefinedAt(x: Json): Boolean =
     Unpickle[StateUpdate].fromString(x).isSuccess
 }

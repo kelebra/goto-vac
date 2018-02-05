@@ -4,18 +4,24 @@ import akka.actor.ActorSystem
 import akka.http.scaladsl.model.ws.{Message, TextMessage}
 import akka.stream.ActorMaterializer
 import akka.stream.scaladsl.{BroadcastHub, Flow, Keep, MergeHub}
-import com.gotovac.backend.service.chain.Constants
+import com.gotovac.backend.service.chain.Types
+import com.gotovac.backend.service.chain.Types.{Json, JsonReply}
 
-case class Socket(processing: PartialFunction[String, String])
+import scala.concurrent.{ExecutionContext, Future}
+
+case class Socket(processing: PartialFunction[Json, JsonReply])
                  (implicit val system: ActorSystem, mat: ActorMaterializer) {
+
+  implicit val ctx: ExecutionContext = system.dispatcher
 
   private val transformation =
     Flow[Message]
-      .map { case TextMessage.Strict(json) =>
-        system.log.info(s"Received message: $json"); processing(json)
+      .mapAsync(1) {
+        case TextMessage.Strict(json) => processing(json)
+        case _                        => Future.successful(Types.noOp)
       }
-      .filterNot(_ == Constants.noOp)
-      .map(json => TextMessage(json))
+      .filterNot(_ == Types.noOp)
+      .map(TextMessage.apply)
 
   val replyFlow: Flow[Message, Message, Any] = transformation
 
