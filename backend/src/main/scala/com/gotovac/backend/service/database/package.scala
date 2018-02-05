@@ -4,7 +4,6 @@ import com.gotovac.backend.service.repository.{StateRepository, UserRepository}
 import com.gotovac.model._
 import slick.jdbc.PostgresProfile.api._
 
-import scala.concurrent.ExecutionContext.Implicits.global
 import scala.language.postfixOps
 
 package object database {
@@ -40,16 +39,17 @@ package object database {
   object StateRepository extends StateRepository {
 
     override def getState(token: Token): GroupState = {
+      val databaseResult = Db.run(
+        Db.credentials.joinLeft(Db.state).on(_.login === _.login).result
+      )
       GroupState(
-        Db.run(
-          Db.credentials
-            .joinLeft(Db.state).on(_.login === _.login)
-            .result
-            .map(_.map {
-              case ((l1, _, _), Some((_, date))) => l1 -> Set(SelectedDate(date))
-              case ((l1, _, _), None)            => l1 -> Set.empty[SelectedDate]
-            })
-        ).toMap
+        databaseResult
+          .map({
+            case ((l1, _, _), Some((_, date))) => l1 -> Set(SelectedDate(date))
+            case ((l1, _, _), None)            => l1 -> Set.empty[SelectedDate]
+          })
+          .groupBy(_._1)
+          .mapValues(_.map(_._2).fold(Set.empty)(_ ++ _))
       )
     }
 
