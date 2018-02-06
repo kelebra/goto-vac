@@ -8,7 +8,7 @@ import prickle.Unpickle
 
 object ReplySocket extends Socket {
 
-  override val name = "reply"
+  override def name = "reply"
 
   def login(credentials: Credentials): Unit = send(write(credentials))
 

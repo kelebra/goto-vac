@@ -10,7 +10,7 @@ import prickle.Unpickle
 
 object BroadcastSocket extends Socket {
 
-  override val name: String = "broadcast"
+  override def name: String = "broadcast"
 
   override def onMessage(json: String): Unit = {
     onOnline(json)(status =>
