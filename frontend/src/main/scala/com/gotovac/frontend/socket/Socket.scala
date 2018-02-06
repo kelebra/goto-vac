@@ -23,8 +23,11 @@ trait Socket {
         onMessage(json)
       }
     }
-    underlying.onclose =
-      (_: Event) => Notification.error("Connection lost with backend, refresh page")
+    underlying.onclose = {
+      (_: Event) =>
+        console.log(s"$name - connection lost with backend")
+        connect()
+    }
   }
 
   private def onForbidden(json: String)(callback: Forbidden => Unit): Unit =
