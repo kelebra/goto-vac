@@ -13,6 +13,10 @@ project backend
 ~reStart
 ```
 
+## Hosted version
+
+[Heroku](http://infinite-sands-52716.herokuapp.com/)
+
 ## Tailing log files
 
 ```scala
