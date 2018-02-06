@@ -14,6 +14,8 @@ import scalatags.JsDom.all._
 object Calendar {
 
   def renderCalendarView(state: GroupState): Unit = {
+    val start = startDate
+
     draw(
       List(
         div(`class` := "row", style := "padding: 1%",
@@ -22,17 +24,21 @@ object Calendar {
           ),
         ),
         div(`class` := "row",
-          div(`class` := "row", calendarTable(state))
+          div(`class` := "row", calendarTable(state, start))
         )
       ).map(_.render)
     )
+
     state.data.foreach {
       case (login, dates) =>
-        dates.foreach(date => update(login, date, selected = true))
+        dates
+          .filter(_.date <= start.getTime())
+          .foreach(date => update(login, date, selected = true))
     }
   }
 
-  def update(delta: StateUpdate): Unit = update(delta.token.login, delta.date, delta.selected)
+  def update(delta: StateUpdate): Unit =
+    update(delta.token.login, delta.date, delta.selected)
 
   private def update(login: Login,
                      selectedDate: SelectedDate,
@@ -42,8 +48,8 @@ object Calendar {
     else CalendarSelection.unSelect(id)
   }
 
-  private def calendarTable(state: GroupState) = {
-    val dates = generateDates
+  private def calendarTable(state: GroupState, start: Date) = {
+    val dates = generateDates(start)
     val months = offsetMonths(dates)
 
     table(`class` := "bordered",
@@ -84,9 +90,12 @@ object Calendar {
       !CalendarSelection.isSelected(identifier)
     )
 
-  private def generateDates = {
+  private def generateDates(start: Date) =
+    daysOfYear(start, start.plusYears(1), List(start))
+
+  private def startDate = {
     val start = new Date()
     start.setHours(0, 0, 0, 0)
-    daysOfYear(start, start.plusYears(1), List(start))
+    start
   }
 }

@@ -31,12 +31,9 @@ lazy val backend =
         "postgresql" % "postgresql" % "9.1-901-1.jdbc4"
       ),
       resourceGenerators in Compile += Def.task {
-        val f1 = (fastOptJS in Compile in frontend).value
-        val f2 = (packageScalaJSLauncher in Compile in frontend).value
-        Seq(f1.data, f2.data)
+        Seq((fullOptJS in Compile in frontend).value.data)
       }.taskValue,
       watchSources ++= (watchSources in frontend).value,
-      herokuAppName in Compile := "infinite-sands-52716",
       mainClass in assembly := Option("com.gotovac.backend.Backend")
     )
 

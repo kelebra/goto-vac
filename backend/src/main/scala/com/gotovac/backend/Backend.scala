@@ -5,7 +5,7 @@ import akka.http.scaladsl.Http
 import akka.stream.ActorMaterializer
 import com.gotovac.backend.service.chain.{CredentialsProcess, StateRequestProcess, StateUpdateProcess, UserOnlineProcess}
 import com.gotovac.backend.service.database.{Db, StateRepository, UserRepository}
-import com.gotovac.backend.service.{Rest, Socket}
+import com.gotovac.backend.service.{KeepAlive, Rest, Socket}
 
 import scala.util.{Failure, Success, Try}
 
@@ -33,14 +33,14 @@ object Backend extends App {
       .orElse(credentialsProcess)
 
   val socket = Socket(processing)
-  val rest = Rest(socket.replyFlow, socket.broadcastFlow)
+  val rest = Rest(KeepAlive.echoRoute, socket.replyFlow, socket.broadcastFlow)
 
   val binding = Http().bindAndHandle(rest.route, host, port)
 
   binding.onComplete {
-    case Success(b) =>
-      val local = b.localAddress
-      system.log.info("Server is listening to {}:{}", local.getHostName, local.getPort)
+    case Success(_) =>
+      KeepAlive.binding(host, port)
+      system.log.info("Server is listening to {}:{}", host, port)
     case Failure(e) =>
       system.log.error(e, "Could not start server at {}:{}", host, port)
   }
