@@ -13,8 +13,8 @@ project backend
 ~reStart
 ```
 
-## Deployment
+## Tailing log files
 
 ```scala
-sbt clean stage deployHeroku
+heroku logs -t -a infinite-sands-52716
 ```
