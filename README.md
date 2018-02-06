@@ -2,8 +2,7 @@
 Simple vacation sync
 
 [![Build Status](https://travis-ci.org/kelebra/goto-vac.svg?branch=master)](https://travis-ci.org/kelebra/goto-vac)
-
-![Heroku](https://heroku-badge.herokuapp.com/?app=infinite-sands-52716)
+![Heroku](http://heroku-badge.herokuapp.com/?app=infinite-sands-52716&style=flat&svg=1)
 
 ## Running build locally
 
