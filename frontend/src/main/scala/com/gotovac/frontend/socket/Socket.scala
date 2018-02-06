@@ -10,9 +10,11 @@ import prickle.Unpickle
 trait Socket {
 
   val name: String
-  private lazy val underlying: WebSocket = new WebSocket(socketUrl(name))
+  private var underlying = refreshSocket()
 
   def connect(): Unit = {
+    underlying = refreshSocket()
+
     underlying.onopen = {
       (_: Event) => console.log(s"$name - connection was opened")
     }
@@ -29,6 +31,8 @@ trait Socket {
         connect()
     }
   }
+
+  private def refreshSocket(): WebSocket = new WebSocket(socketUrl(name))
 
   private def onForbidden(json: String)(callback: Forbidden => Unit): Unit =
     Unpickle[Forbidden].fromString(json).foreach(callback)
