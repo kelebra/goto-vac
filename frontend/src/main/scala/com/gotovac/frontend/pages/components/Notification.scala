@@ -13,14 +13,14 @@ object Notification {
   private def display(text: String, status: String): Unit = {
     val notificationElement = element(text, status)
     document.body.appendChild(notificationElement)
-    window.setTimeout(() => remove(notificationElement), 2000)
+    window.setTimeout(() ⇒ remove(notificationElement), 2000)
   }
 
   private def remove(notification: Node): Unit =
     try {
       document.body.removeChild(notification)
     } catch {
-      case _: Exception =>
+      case _: Exception ⇒
     }
 
   private def element(content: String, status: String): Node =

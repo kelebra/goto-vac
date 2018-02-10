@@ -15,18 +15,18 @@ trait Socket {
     underlying = refreshSocket()
 
     underlying.onmessage = {
-      (e: MessageEvent) => {
+      (e: MessageEvent) ⇒ {
         val json = e.data.toString
-        onForbidden(json) { forbidden => Notification.error(forbidden.message) }
+        onForbidden(json) { forbidden ⇒ Notification.error(forbidden.message) }
         onMessage(json)
       }
     }
-    underlying.onclose = (_: Event) => connect()
+    underlying.onclose = (_: Event) ⇒ connect()
   }
 
   private def refreshSocket(): WebSocket = new WebSocket(socketUrl(name))
 
-  private def onForbidden(json: String)(callback: Forbidden => Unit): Unit =
+  private def onForbidden(json: String)(callback: Forbidden ⇒ Unit): Unit =
     Unpickle[Forbidden].fromString(json).foreach(callback)
 
   private def socketUrl(name: String): String = {

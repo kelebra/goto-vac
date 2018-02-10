@@ -3,7 +3,7 @@ package com.gotovac.backend.service.chain
 import com.gotovac.backend.service.chain.Types.{Json, JsonReply}
 import com.gotovac.backend.service.repository.{StateRepository, UserRepository}
 import com.gotovac.model.StateUpdate
-import prickle.Pickle.{intoString => write}
+import prickle.Pickle.{intoString ⇒ write}
 import prickle.Unpickle
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -17,11 +17,11 @@ class StateUpdateProcess(stateRepository: StateRepository, userRepository: UserR
     userRepository
       .hasValidSession(stateUpdate.token)
       .flatMap {
-        case true =>
+        case true ⇒
           stateRepository
             .updateState(stateUpdate)
-            .map(_ => write(stateUpdate.anonymous))
-        case _    => Future.successful(Types.noOp)
+            .map(_ ⇒ write(stateUpdate.anonymous))
+        case _    ⇒ Future.successful(Types.noOp)
       }
   }
 

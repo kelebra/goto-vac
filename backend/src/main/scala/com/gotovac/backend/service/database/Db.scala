@@ -45,9 +45,9 @@ object Db {
 
   def init(): Unit = {
     val existing = db.run(MTable.getTables)
-    val createTablesIfDoNotExist = existing.flatMap(v => {
-      val names = v.map(mt => mt.name.name)
-      val createIfNotExist = applicationTables.filter(table =>
+    val createTablesIfDoNotExist = existing.flatMap(v ⇒ {
+      val names = v.map(mt ⇒ mt.name.name)
+      val createIfNotExist = applicationTables.filter(table ⇒
         !names.contains(table.baseTableRow.tableName)).map(_.schema.create)
       db.run(DBIO.sequence(createIfNotExist))
     })

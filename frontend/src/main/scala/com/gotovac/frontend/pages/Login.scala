@@ -12,8 +12,8 @@ import scalatags.JsDom.all._
 
 object Login {
 
-  private val submitCredentials: MouseEvent => Unit =
-    _ => ReplySocket.login(
+  private val submitCredentials: MouseEvent ⇒ Unit =
+    _ ⇒ ReplySocket.login(
       Credentials(
         getElementById("login").asInstanceOf[Input].value,
         getElementById("password").asInstanceOf[Input].value

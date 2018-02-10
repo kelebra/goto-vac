@@ -30,10 +30,10 @@ object Calendar {
     )
 
     state.data.foreach {
-      case (login, dates) =>
+      case (login, dates) ⇒
         dates
           .filter(_.date <= start.getTime())
-          .foreach(date => update(login, date, selected = true))
+          .foreach(date ⇒ update(login, date, selected = true))
     }
   }
 
@@ -55,12 +55,12 @@ object Calendar {
     table(`class` := "bordered",
       tr(style := "text-align: center", td(), months.map(monthCell)),
       state.data.keys.toList.sorted
-        .map(login => login -> dates)
+        .map(login ⇒ login -> dates)
         .map {
-          case (login, dateLine) =>
+          case (login, dateLine) ⇒
             tr(
               td(b(login)),
-              dateLine.map(date =>
+              dateLine.map(date ⇒
                 dateCell(login, date, LoginStorage.token.login == login)
               )
             )
@@ -74,8 +74,8 @@ object Calendar {
   private def dateCell(login: Login, date: Date, canModify: Boolean) = {
     val identifier = CalendarSelection.cellId(login, date)
     val pointer = if (canModify) "cursor: pointer;" else ""
-    val onclickFunction: MouseEvent => Unit =
-      if (canModify) dateClick(identifier) else _ => Unit
+    val onclickFunction: MouseEvent ⇒ Unit =
+      if (canModify) dateClick(identifier) else _ ⇒ Unit
     td(
       id := identifier,
       style := s"white-space: nowrap; $pointer",
@@ -84,8 +84,8 @@ object Calendar {
     )
   }
 
-  private def dateClick(identifier: String): MouseEvent => Unit =
-    _ => BroadcastSocket.modifyDate(
+  private def dateClick(identifier: String): MouseEvent ⇒ Unit =
+    _ ⇒ BroadcastSocket.modifyDate(
       SelectedDate(CalendarSelection.cellUTCDate(identifier)),
       !CalendarSelection.isSelected(identifier)
     )

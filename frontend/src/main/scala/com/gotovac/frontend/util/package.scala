@@ -50,7 +50,7 @@ package object util {
                    lastMonth: Option[String] = None,
                    acc: List[MonthOffset] = List.empty): List[MonthOffset] =
     dates match {
-      case head :: tail =>
+      case head :: tail ⇒
         val month = head.month
         if (lastMonth.contains(month)) {
           val monthSize = currentMonthSize + 1
@@ -58,7 +58,7 @@ package object util {
             tail, monthSize, Option(month), (month, monthSize) :: acc.tail
           )
         } else offsetMonths(tail, 1, Option(month), (month, 1) :: acc)
-      case _ => acc.reverse
+      case _ ⇒ acc.reverse
     }
 
 

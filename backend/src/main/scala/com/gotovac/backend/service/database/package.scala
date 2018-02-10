@@ -26,10 +26,10 @@ package object database {
 
       Db.run(userQuery.exists.result)
         .flatMap {
-          case true =>
+          case true ⇒
             val token = Token(attempt.login)
-            updateToken(token).map(_ => Option(token))
-          case _    => Future.successful(None)
+            updateToken(token).map(_ ⇒ Option(token))
+          case _    ⇒ Future.successful(None)
         }
     }
 
@@ -52,8 +52,8 @@ package object database {
       databaseResult
         .map(_
           .map({
-            case ((l1, _, _), Some((_, date))) => l1 -> Set(SelectedDate(date))
-            case ((l1, _, _), None)            => l1 -> Set.empty[SelectedDate]
+            case ((l1, _, _), Some((_, date))) ⇒ l1 -> Set(SelectedDate(date))
+            case ((l1, _, _), None)            ⇒ l1 -> Set.empty[SelectedDate]
           })
           .groupBy(_._1)
           .mapValues(_.map(_._2).fold(Set.empty)(_ ++ _))
@@ -64,14 +64,14 @@ package object database {
     override def updateState(stateUpdate: StateUpdate): Future[Unit] =
       if (stateUpdate.selected)
         Db.run(Db.state += (stateUpdate.token.login, stateUpdate.date.date))
-          .map(_ => Unit)
+          .map(_ ⇒ Unit)
       else
         Db.run(
           Db.state
             .filter(_.login === stateUpdate.token.login)
             .filter(_.date === stateUpdate.date.date)
             .delete
-        ).map(_ => Unit)
+        ).map(_ ⇒ Unit)
   }
 
 }

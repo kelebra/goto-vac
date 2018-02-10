@@ -38,10 +38,10 @@ object Backend extends App {
   val binding = Http().bindAndHandle(rest.route, host, port)
 
   binding.onComplete {
-    case Success(_) =>
+    case Success(_) ⇒
       KeepAlive.binding(host, port)
       system.log.info("Server is listening to {}:{}", host, port)
-    case Failure(e) =>
+    case Failure(e) ⇒
       system.log.error(e, "Could not start server at {}:{}", host, port)
   }
 }

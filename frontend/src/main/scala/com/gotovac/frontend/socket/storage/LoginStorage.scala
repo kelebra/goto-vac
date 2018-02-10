@@ -15,7 +15,7 @@ object LoginStorage {
     (0 until window.sessionStorage.length)
       .map(window.sessionStorage.key)
       .find(isApplicationPrefix)
-      .map(key => Token(keyAsLogin(key), window.sessionStorage.getItem(key)))
+      .map(key ⇒ Token(keyAsLogin(key), window.sessionStorage.getItem(key)))
       .get
 
   private def loginAsKey(login: Login) = s"$applicationPrefix$login"

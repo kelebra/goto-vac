@@ -17,8 +17,8 @@ case class Socket(processing: PartialFunction[Json, JsonReply])
   private val transformation =
     Flow[Message]
       .mapAsync(1) {
-        case TextMessage.Strict(json) => processing(json)
-        case _                        => Future.successful(Types.noOp)
+        case TextMessage.Strict(json) ⇒ processing(json)
+        case _                        ⇒ Future.successful(Types.noOp)
       }
       .filterNot(_ == Types.noOp)
       .map(TextMessage.apply)

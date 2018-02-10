@@ -20,8 +20,8 @@ class KeepAlive(host: String, port: Int)
   def echoRequest(): Unit = Http()
     .singleRequest(HttpRequest(uri = s"http://$host:$port/${KeepAlive.echoRoute}"))
     .onComplete {
-      case Success(response) => system.log.info("Echo request response: {}", response)
-      case Failure(e)        => system.log.error("Echo failed: {}", e.getMessage)
+      case Success(response) ⇒ system.log.info("Echo request response: {}", response)
+      case Failure(e)        ⇒ system.log.error("Echo failed: {}", e.getMessage)
     }
 }
 
@@ -33,6 +33,6 @@ object KeepAlive {
              (implicit system: ActorSystem, mat: ActorMaterializer,
               ctx: ExecutionContextExecutor): Unit = {
     val keepAlive = new KeepAlive(host, port)
-    system.scheduler.schedule(30 seconds, 5 minutes, () => keepAlive.echoRequest())
+    system.scheduler.schedule(30 seconds, 5 minutes, () ⇒ keepAlive.echoRequest())
   }
 }
