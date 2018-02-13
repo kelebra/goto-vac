@@ -1,11 +1,12 @@
 package com.gotovac.frontend.pages
 
-import com.gotovac.frontend.util.draw
+import com.gotovac.frontend.pages.components.KeyStroke
 import com.gotovac.frontend.socket.ReplySocket
+import com.gotovac.frontend.util.draw
 import com.gotovac.model.Credentials
 import org.scalajs.dom.Element
 import org.scalajs.dom.document.getElementById
-import org.scalajs.dom.html.Input
+import org.scalajs.dom.html.{Button, Input}
 import org.scalajs.dom.raw.MouseEvent
 
 import scalatags.JsDom.all._
@@ -34,12 +35,18 @@ object Login {
             input(`type` := "password", id := "password")
           ),
           div(`class` := "form-item",
-            button("Submit", onclick := submitCredentials)
+            button(id := "submit", "Submit", onclick := submitCredentials)
           )
         )
       )
     ).render
   )
 
-  def render(): Unit = draw(elements)
+  def render(): Unit = {
+    KeyStroke.register({
+      case e if e.keyCode == KeyStroke.ENTER ⇒
+        getElementById("submit").asInstanceOf[Button].click()
+    })
+    draw(elements)
+  }
 }

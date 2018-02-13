@@ -10,6 +10,7 @@ object Frontend extends js.JSApp {
   override def main(): Unit = {
     ReplySocket.connect()
     BroadcastSocket.connect()
+    ReplySocket.loginWithToken()
     Login.render()
   }
 }

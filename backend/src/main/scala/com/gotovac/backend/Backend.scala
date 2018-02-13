@@ -3,7 +3,7 @@ package com.gotovac.backend
 import akka.actor.ActorSystem
 import akka.http.scaladsl.Http
 import akka.stream.ActorMaterializer
-import com.gotovac.backend.service.chain.{CredentialsProcess, StateRequestProcess, StateUpdateProcess, UserOnlineProcess}
+import com.gotovac.backend.service.chain._
 import com.gotovac.backend.service.database.{Db, StateRepository, UserRepository}
 import com.gotovac.backend.service.{KeepAlive, Rest, Socket}
 
@@ -25,12 +25,14 @@ object Backend extends App {
   val credentialsProcess = new CredentialsProcess(UserRepository)
   val stateRequestProcess = new StateRequestProcess(StateRepository)
   val stateUpdateProcess = new StateUpdateProcess(StateRepository, UserRepository)
+  val tokenCheckProcess = new TokenCheckProcess(UserRepository)
 
   val processing =
     stateUpdateProcess
       .orElse(stateRequestProcess)
       .orElse(UserOnlineProcess)
       .orElse(credentialsProcess)
+      .orElse(tokenCheckProcess)
 
   val socket = Socket(processing)
   val rest = Rest(KeepAlive.echoRoute, socket.replyFlow, socket.broadcastFlow)

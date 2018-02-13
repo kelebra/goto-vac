@@ -1,10 +1,8 @@
 package com.gotovac.model
 
-import java.util.UUID
-
 import com.gotovac.model.Types.Login
 
-case class Token(login: Login, value: String = UUID.randomUUID().toString) {
+case class Token(login: Login, value: String) {
 
   def anonymous: Token = copy(value = "")
 }

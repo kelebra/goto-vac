@@ -26,9 +26,7 @@ object BroadcastSocket extends Socket {
     send(write(StateUpdate(LoginStorage.token, selectedDate, selected)))
 
   private def onOnline(json: String)(callback: UserOnline ⇒ Unit): Unit =
-    Unpickle[UserOnline].fromString(json)
-      .filter(status ⇒ status.login != LoginStorage.token.login)
-      .foreach(callback)
+    Unpickle[UserOnline].fromString(json).foreach(callback)
 
   private def onStateUpdate(json: String)(callback: StateUpdate ⇒ Unit): Unit =
     Unpickle[StateUpdate].fromString(json).foreach(callback)

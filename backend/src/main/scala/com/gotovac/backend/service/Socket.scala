@@ -14,10 +14,15 @@ case class Socket(processing: PartialFunction[Json, JsonReply])
 
   implicit val ctx: ExecutionContext = system.dispatcher
 
+  private def logAndProcess(msg: String) = {
+    system.log.info("Received message: {}", msg)
+    processing(msg)
+  }
+
   private val transformation =
     Flow[Message]
       .mapAsync(1) {
-        case TextMessage.Strict(json) ⇒ processing(json)
+        case TextMessage.Strict(json) ⇒ logAndProcess(json)
         case _                        ⇒ Future.successful(Types.noOp)
       }
       .filterNot(_ == Types.noOp)

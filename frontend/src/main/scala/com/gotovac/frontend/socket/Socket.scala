@@ -24,6 +24,8 @@ trait Socket {
     underlying.onclose = (_: Event) ⇒ connect()
   }
 
+  def connected: Boolean = underlying.readyState == 1
+
   private def refreshSocket(): WebSocket = new WebSocket(socketUrl(name))
 
   private def onForbidden(json: String)(callback: Forbidden ⇒ Unit): Unit =

@@ -1,12 +1,13 @@
 package com.gotovac.backend.service
 
+import java.util.UUID
+
 import com.gotovac.backend.service.repository.{StateRepository, UserRepository}
 import com.gotovac.model._
 import slick.jdbc.PostgresProfile.api._
 
 import scala.concurrent.Future
 import scala.language.postfixOps
-
 import scala.concurrent.ExecutionContext.Implicits.global
 
 package object database {
@@ -27,7 +28,7 @@ package object database {
       Db.run(userQuery.exists.result)
         .flatMap {
           case true ⇒
-            val token = Token(attempt.login)
+            val token = Token(attempt.login, UUID.randomUUID().toString)
             updateToken(token).map(_ ⇒ Option(token))
           case _    ⇒ Future.successful(None)
         }
